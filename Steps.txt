@@ -1,0 +1,20 @@
+*Passos que vamos desenvolver:*
+   __Tópico 1 (Comando de lampadas automatico):__
+      1. Adaptação de esquemático da montagem e definição dos componentes (valores);
+      2. Montagem dos circuitos de saída em protoboard;
+      3. Criação de módulo de comando das Saídas em C/C++;
+      4. Teste do módulo rodando no Rasp;
+      5. Versionamento 1;
+   __Tópico 2 (Monitoramento de lâmpadas):__
+      1. Adição do circuito de interface para entradas na protoboard; (OU montagem do circuito SEPARADO)
+      2. Implementação de monitoramento das lâmpadas no módulo de comando; (OU criação do módulo SEPARADO, tipo uma biblioteca)
+      3. Teste do segundo módulo rodando no Rasp;
+      4.0. Incorporar novo módulo no primeiro e retestagem;
+      4. Versionamento 2;
+   __Tópico 3 (Interface para controle manual e param.):__
+      1. Implementação de páginas HTML;
+      2. Implementação de webserver python (Flask);
+      3. Implementação de API para módulo de comando no WebServer;
+      4. Implementação de API no módulo de comando;
+      5. Teste dos módulos em conjunto;
+      6. Versionamento 3. 
