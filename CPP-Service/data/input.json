@@ -1,0 +1,19 @@
+{
+    "executionRequests": [
+        {
+            "idExecution": 0,
+            "requestedBy": 1,
+            "status": 0,
+            "outId": 1,
+            "targetValue": 1
+        },
+        {
+            "idExecution": 10,
+            "requestedBy": 1,
+            "status": 0,
+            "outId": 1,
+            "targetValue": 0
+        }
+    ],
+    "automaticLightCommand": false
+}
