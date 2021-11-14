@@ -1,0 +1,1 @@
+g++ main.cpp lib/jApi/jApi.cpp -o main -std=c++11 -pthread
