@@ -3,7 +3,7 @@
         {
             "idExecution": 0,
             "requestedBy": 1,
-            "status": 0,
+            "status": 1,
             "outId": 1,
             "targetValue": 1
         },
@@ -15,5 +15,6 @@
             "targetValue": 0
         }
     ],
-    "automaticLightCommand": false
+    "automaticLightCommand": true,
+    "debugOnline": false
 }

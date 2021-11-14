@@ -12,6 +12,7 @@ typedef struct ServiceInput
 {
     std::vector<ExecutionRequest>* executionRequests;
     bool automaticLightCommand = false;
+    bool debugOnline = false;
 };
 
 

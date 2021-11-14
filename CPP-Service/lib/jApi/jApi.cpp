@@ -9,6 +9,7 @@ std::thread* apiThread;
 ServiceInput inputData;
 ServiceOutput outputData;
 std::vector<ExecutionRequest> executeGlobalList(100);
+std::vector<unsigned int> executedRequestsList(100);
 
 bool _runJapiThread = false;
 
@@ -19,6 +20,8 @@ bool ParseExecutionRequestsList(json obj, std::vector<ExecutionRequest>* execLis
 int MainAPILoop()
 {
     inputData.executionRequests = &executeGlobalList;
+    outputData.executedRequests = &executedRequestsList;
+    outputData.executedRequests->clear();
     JapiPrintln("Started!");
     while (_runJapiThread)
     {
@@ -69,9 +72,12 @@ json ConvertOutputToJson(ServiceOutput outObj)
     json jObj;
 
     jObj["input0"] = outObj.input0;
+    jObj["input1"] = outObj.input1;
+    jObj["input2"] = outObj.input2;
     jObj["out0"] = outObj.out0;
     jObj["execRequestCounter"] = outObj.execRequestCounter;
     jObj["automaticLightCommand"] = outObj.automaticLightCommand;
+    jObj["executedRequests"] = *(outObj.executedRequests);
 
     return jObj;
 }
@@ -82,6 +88,7 @@ bool ParseInput(std::stringstream* strStream, ServiceInput* inObject)
     inObject->executionRequests->clear();
 
     inObject->automaticLightCommand = jObj["automaticLightCommand"];
+    inObject->debugOnline = jObj["debugOnline"];
     ParseExecutionRequestsList(jObj["executionRequests"], (inObject->executionRequests));
 
     return true;
@@ -108,13 +115,7 @@ bool ParseExecutionRequestsList(json obj, std::vector<ExecutionRequest>* execLis
 
         execList->insert(it, request);
 
-        
         finished = true;
-        // cout << "INNER OBJECTS" << endl;
-        // for (auto& sel : el.begin().value().items())
-        // {
-        //     cout << sel.key() << " : " << sel.value() << endl;
-        // }
     }
     return finished;
 }
@@ -129,7 +130,6 @@ void PrintInput(ServiceInput inputObject)
         cout << "OutId " << (inputObject.executionRequests)->at(0).outId << endl;
         cout << "TargetValue " << (inputObject.executionRequests)->at(0).targetValue << endl;
     }
-    
 }
 
 bool WriteInput(ServiceInput inObject)
@@ -153,5 +153,27 @@ bool WriteOutput(ServiceOutput outObject)
 
 void JapiPrintln(string data)
 {
-    cout << endl << "#JAPI --> " << data;
+    cout << "#JAPI --> " << data << endl;
+}
+
+int CountExecutedRequests()
+{
+    return executedRequestsList.size();
+}
+
+void InsertExecutedRequest(unsigned int requestId)
+{
+    std::vector<unsigned int>::iterator it = executedRequestsList.begin();
+    executedRequestsList.insert(it, requestId);
+}
+
+bool ExecutedRequestsContains(unsigned int requestId)
+{
+    for(unsigned int i = 0; i < executedRequestsList.size(); i++)
+    {
+        if(executedRequestsList.at(i) == requestId)
+            return true;
+    }
+
+    return false;
 }

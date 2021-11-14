@@ -26,6 +26,9 @@ void PrintInput(ServiceInput inputObject);
 bool WriteInput(ServiceInput inObject);
 bool WriteOutput(ServiceOutput outObject);
 void JapiPrintln(string data);
+bool ExecutedRequestsContains(unsigned int requestId);
+void InsertExecutedRequest(unsigned int requestId);
+int CountExecutedRequests();
 
 extern ServiceInput inputData;
 extern ServiceOutput outputData;
