@@ -8,6 +8,24 @@
             "type": "shell",
             "command": "cd User-Interface/src/ ; py japiTester.py",
             "problemMatcher": []
+        },
+        {
+            "label": "Run back",
+            "type": "shell",
+            "command": "cd User-Interface/src/ ; py -m flask run --port 4433",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run cpp-service",
+            "type": "shell",
+            "command": "cd CPP-Service/ ; ./main.exe",
+            "problemMatcher": []
+        },
+        {
+            "label": "Build cpp-service",
+            "type": "shell",
+            "command": "cd CPP-Service/ ; g++ main.cpp lib/jApi/jApi.cpp -o main.exe",
+            "problemMatcher": []
         }
     ]
 }

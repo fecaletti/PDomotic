@@ -109,15 +109,15 @@ class jApiClient:
         return True
 
     def SetServiceConfig(self, config):
-        if(hasattr(self.__serviceInputObj, config.key)):
-            setattr(self.__serviceInputObj, config.key, config.value)
+        if(hasattr(self.__serviceInputObj, config["key"])):
+            setattr(self.__serviceInputObj, config["key"], config["value"])
             self.__serviceInputNeedSync = True
             return True
         else:
             return False
 
     def GetServiceOutput(self):
-        return self.__serviceOutputObj
+        return json.dumps(self.__serviceOutputObj)
 
     def GetServiceInput(self):
         return self.__serviceInputObj
