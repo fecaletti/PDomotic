@@ -14,7 +14,7 @@ typedef struct ServiceOutput
     int input1 = 0;
     int input2 = 0;
     unsigned int execRequestCounter = 0;
-    bool automaticLightCommand = false;
+    int automaticLightCommand = false;
     std::vector<unsigned int>* executedRequests;
 };
 

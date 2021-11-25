@@ -1,34 +1,5 @@
 {
     "automaticLightCommand": true,
     "debugOnline": false,
-    "executionRequests": [
-        {
-            "idExecution": 1,
-            "outId": 17,
-            "requestedBy": 1,
-            "status": 0,
-            "targetValue": 1
-        },
-        {
-            "idExecution": 2,
-            "outId": 17,
-            "requestedBy": 1,
-            "status": 0,
-            "targetValue": 1
-        },
-        {
-            "idExecution": 3,
-            "outId": 17,
-            "requestedBy": 1,
-            "status": 0,
-            "targetValue": 1
-        },
-        {
-            "idExecution": 4,
-            "outId": 17,
-            "requestedBy": 1,
-            "status": 0,
-            "targetValue": 1
-        }
-    ]
+    "executionRequests": []
 }

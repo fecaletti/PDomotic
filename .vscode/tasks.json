@@ -26,6 +26,12 @@
             "type": "shell",
             "command": "cd CPP-Service/ ; g++ main.cpp lib/jApi/jApi.cpp -o main.exe",
             "problemMatcher": []
+        },
+        {
+            "label": "Launch front-end",
+            "type": "shell",
+            "command": "cd User-Interface/app/ ; npm start",
+            "problemMatcher": []
         }
     ]
 }

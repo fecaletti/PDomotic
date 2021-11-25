@@ -14,7 +14,10 @@ api = Api(app)
 
 class LightCommander(Resource):
     def get(self):
-        return japi.GetServiceOutput()
+        jsonObject = {}
+        jsonObject["serviceOutput"] = japi.GetServiceOutput()
+        jsonObject["serviceInput"] = japi.GetServiceInput()
+        return json.dumps(jsonObject)
 
     def post(self):
         reqData = json.loads(request.data)

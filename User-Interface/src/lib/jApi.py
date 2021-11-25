@@ -29,6 +29,7 @@ class jApiClient:
     def __init__(self, serviceInputFP = SERVICE_INPUT_FP, serviceOutputFP = SERVICE_OUTPUT_FP):
         self.__serviceInputFP = serviceInputFP
         self.__serviceOutputFP = serviceOutputFP
+        self.__debug = True
         self.__loopRunning = True
         self.__executionRequests = []
         self.__serviceInputObj = ServiceInput()
@@ -72,7 +73,8 @@ class jApiClient:
     def __syncServiceInput(self):
         try:
             self.__serviceInputObj.executionRequests = self.__executionRequests
-            print(self.__serviceInputObj.__dict__)
+            if self.__debug:
+                print(self.__serviceInputObj.__dict__)
             with open(self.__serviceInputFP, "w") as siFile:
                 siFile.write(json.dumps(self.__serviceInputObj.__dict__, indent = 4, sort_keys = True))
         except:
@@ -120,7 +122,7 @@ class jApiClient:
         return json.dumps(self.__serviceOutputObj)
 
     def GetServiceInput(self):
-        return self.__serviceInputObj
+        return json.dumps(self.__serviceInputObj.__dict__)
 
     def StopThread(self):
         self.__loopRunning = False
