@@ -1,46 +1,67 @@
 #include "jApi.h"
 #include "../nlohmann/json.hpp"
+#include <stdexcept>
 
 using namespace std;
 using json = nlohmann::json;
 
 std::thread* apiThread;
 
-ServiceInput inputData;
-ServiceOutput outputData;
-std::vector<ExecutionRequest> executeGlobalList(100);
-std::vector<unsigned int> executedRequestsList(100);
+ServiceInput* inputPtr;
+ServiceOutput* outPtr;
+//std::vector<ExecutionRequest> executeGlobalList(100);
+//std::vector<unsigned int> executedRequestsList(100);
 
 bool _runJapiThread = false;
+bool _cleaningOrders = false;
 
 json ConvertOutputToJson(ServiceOutput outObj);
 bool ParseInput(std::stringstream* strStream, ServiceInput* inObject);
 bool ParseExecutionRequestsList(json obj, std::vector<ExecutionRequest>* execList);
+// bool InputRequestsContains(unsigned int requestId);
+// void CleanExecutedRequests();
 
 int MainAPILoop()
 {
-    inputData.executionRequests = &executeGlobalList;
-    outputData.executedRequests = &executedRequestsList;
-    outputData.executedRequests->clear();
+    //inputPtr->executionRequests = &executeGlobalList;
+    //outPtr->executedRequests = &executedRequestsList;
+    //outPtr->executedRequests->clear();
+    //inputPtr->executionRequests->clear();
     JapiPrintln("Started!");
     while (_runJapiThread)
     {
-        ReadInput(&inputData);
+        try
+        {
+            ReadInput(inputPtr);
+            //PrintInput(*inputPtr);
+            //outPtr->execRequestCounter = inputPtr->executionRequests->size();
+            //outPtr.automaticLightCommand = inputPtr.automaticLightCommand;
 
-        outputData.execRequestCounter = inputData.executionRequests->size();
-        //outputData.automaticLightCommand = inputData.automaticLightCommand;
-
-        //PrintInput(inputData);
-        WriteOutput(outputData);
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+            //PrintInput(inputPtr);
+            //CleanExecutedRequests();
+            WriteOutput(*outPtr);
+            std::this_thread::sleep_for(std::chrono::milliseconds(150));
+        }
+        catch(const std::exception& e)
+        {
+            JapiPrintln("EXCEPTION THROWN IN MAIN LOOP");
+            std::cerr << e.what() << '\n';
+        }
+        // catch(const std::out_of_range& o)
+        // {
+        //     JapiPrintln("OUT OF RANGE EXCEPTION THROWN IN MAIN LOOP");
+        //     std::cerr << o.what() << '\n';
+        // }
     }
     
     JapiPrintln("Process finished...");
     return 0;
 }
 
-void StartJapiThread()
+void StartJapiThread(ServiceOutput* ptrOut, ServiceInput* ptrIn)
 {
+    outPtr = ptrOut;
+    inputPtr = ptrIn;
     _runJapiThread = true;
     apiThread = new std::thread(MainAPILoop);
 }
@@ -77,19 +98,44 @@ json ConvertOutputToJson(ServiceOutput outObj)
     jObj["out0"] = outObj.out0;
     jObj["execRequestCounter"] = outObj.execRequestCounter;
     jObj["automaticLightCommand"] = outObj.automaticLightCommand;
-    jObj["executedRequests"] = *(outObj.executedRequests);
+    jObj["peopleCounter"] = outObj.peopleCounter;
 
+    //jObj["executedRequests"] = *(outObj.executedRequests);
+
+    //cout << "EXPORTED OUT >> " << jObj["out0"] << " - " << outObj.out0 << endl;
     return jObj;
+}
+
+void InsertOutput(int outId, int outVal)
+{
+    outPtr->out0 = outVal;
+}
+
+void InsertInput(int inId, int inVal)
+{
+    switch(inId)
+    {
+        case 0:
+            outPtr->input0 = inVal;
+            break;
+        case 1:
+            outPtr->input1 = inVal;
+            break;
+        case 2:
+            outPtr->input2 = inVal;
+            break;
+    }
 }
 
 bool ParseInput(std::stringstream* strStream, ServiceInput* inObject)
 {
     json jObj = json::parse(strStream->str());
-    inObject->executionRequests->clear();
+    //inObject->executionRequests->clear();
 
     inObject->automaticLightCommand = jObj["automaticLightCommand"];
     inObject->debugOnline = jObj["debugOnline"];
-    ParseExecutionRequestsList(jObj["executionRequests"], (inObject->executionRequests));
+    inObject->targetOut0 = jObj["targetOut0"];
+    //ParseExecutionRequestsList(jObj["executionRequests"], (inObject->executionRequests));
 
     return true;
 }
@@ -124,12 +170,14 @@ void PrintInput(ServiceInput inputObject)
 {
     cout << "Input object -->" << endl;
     cout << "automaticLightCommand: " << inputObject.automaticLightCommand << endl;
-    for (unsigned int i = 0; i < (inputObject.executionRequests)->size(); i++)
-    {
-        cout << "Execution " << (inputObject.executionRequests)->at(0).idExecution << endl;
-        cout << "OutId " << (inputObject.executionRequests)->at(0).outId << endl;
-        cout << "TargetValue " << (inputObject.executionRequests)->at(0).targetValue << endl;
-    }
+    cout << "Target out 0: " << inputObject.targetOut0 << endl;
+
+    // for (unsigned i = 0; i < (inputObject.executionRequests)->size(); i++)
+    // {
+    //     cout << "Execution " << (inputObject.executionRequests)->at(0).idExecution << endl;
+    //     cout << "OutId " << (inputObject.executionRequests)->at(0).outId << endl;
+    //     cout << "TargetValue " << (inputObject.executionRequests)->at(0).targetValue << endl;
+    // }
 }
 
 bool WriteInput(ServiceInput inObject)
@@ -158,22 +206,54 @@ void JapiPrintln(string data)
 
 int CountExecutedRequests()
 {
-    return executedRequestsList.size();
+    return 0;//executedRequestsList.size();
 }
 
-void InsertExecutedRequest(unsigned int requestId)
+void SetPeopleCounter(unsigned int counter)
 {
-    std::vector<unsigned int>::iterator it = executedRequestsList.begin();
-    executedRequestsList.insert(it, requestId);
+    outPtr->peopleCounter = counter;
 }
+// void InsertExecutedRequest(unsigned int requestId)
+// {
+//     std::vector<unsigned int>::iterator it = executedRequestsList.begin();
+//     executedRequestsList.insert(it, requestId);
+// }
 
-bool ExecutedRequestsContains(unsigned int requestId)
+// bool ExecutedRequestsContains(unsigned int requestId)
+// {
+//     for(unsigned int i = 0; i < executedRequestsList.size(); i++)
+//     {
+//         if(executedRequestsList.at(i) == requestId)
+//             return true;
+//     }
+
+//     return false;
+// }
+
+// bool InputRequestsContains(unsigned int requestId)
+// {
+//     for(unsigned i = 0; i < inputPtr->executionRequests->size(); i++)
+//     {
+//         if((inputPtr->executionRequests)->at(i).idExecution == requestId)
+//             return true;
+//     }
+
+//     return false;
+// }
+
+// void CleanExecutedRequests()
+// {
+//     _cleaningOrders = true;
+//     for(unsigned i = 0; i < executedRequestsList.size(); i++)
+//     {
+//         std::vector<unsigned int>::iterator it = executedRequestsList.begin();
+//         if(!InputRequestsContains(executedRequestsList.at(i)))
+//             executedRequestsList.erase(it + i);
+//     }
+//     _cleaningOrders = false;
+// }
+
+bool IsCleaningOrders()
 {
-    for(unsigned int i = 0; i < executedRequestsList.size(); i++)
-    {
-        if(executedRequestsList.at(i) == requestId)
-            return true;
-    }
-
-    return false;
+    return _cleaningOrders;
 }

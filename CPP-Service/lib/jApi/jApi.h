@@ -18,7 +18,7 @@
 
 using namespace std;
 
-void StartJapiThread();
+void StartJapiThread(ServiceOutput* ptrOut, ServiceInput* ptrIn);
 void StopJapiThread();
 bool GetJapiStatus();
 bool ReadInput(ServiceInput* inObject);
@@ -26,11 +26,14 @@ void PrintInput(ServiceInput inputObject);
 bool WriteInput(ServiceInput inObject);
 bool WriteOutput(ServiceOutput outObject);
 void JapiPrintln(string data);
-bool ExecutedRequestsContains(unsigned int requestId);
-void InsertExecutedRequest(unsigned int requestId);
+//bool ExecutedRequestsContains(unsigned int requestId);
+//void InsertExecutedRequest(unsigned int requestId);
+void InsertOutput(int outId, int outVal);
+void InsertInput(int inId, int inVal);
+void SetPeopleCounter(unsigned int counter);
 int CountExecutedRequests();
+bool IsCleaningOrders();
 
-extern ServiceInput inputData;
-extern ServiceOutput outputData;
-
+// extern ServiceInput inputData;
+// extern ServiceOutput outputData;
 #endif

@@ -10,8 +10,9 @@ SERVICE_OUTPUT_FP = "../../CPP-Service/data/output.json"
 class ServiceInput:
     def __init__(self):
         self.executionRequests = []
-        self.automaticLightCommand = True
-        self.debugOnline = False
+        self.automaticLightCommand = 0
+        self.debugOnline = 0
+        self.targetOut0 = 0
 
 
 def CreateExecutionRequest(idExecution, requestedBy, status, outId, targetValue):
@@ -63,16 +64,18 @@ class jApiClient:
         while self.__loopRunning:
             if self.canRun:
                 self.__syncServiceOutput()
+                #self.__cleanOrders()
                 if self.__serviceInputNeedSync:
                     self.__syncServiceInput()
                     self.__serviceInputNeedSync = False
+            
             else:
                 self.__checkIfCanRun()
         print("#JAPI> Ending jApi thread...")
         
     def __syncServiceInput(self):
         try:
-            self.__serviceInputObj.executionRequests = self.__executionRequests
+            #self.__serviceInputObj.executionRequests = self.__executionRequests
             if self.__debug:
                 print(self.__serviceInputObj.__dict__)
             with open(self.__serviceInputFP, "w") as siFile:
@@ -97,6 +100,18 @@ class jApiClient:
             errFile.writelines(self.__errorLog)
         self.__errorLog.clear()
 
+    def __checkRequestExecuted(self, requestId):
+        for i in self.__serviceOutputObj["executedRequests"]:
+            print(f'Checking = {i} for {requestId}')
+            if(i == requestId):
+                return True
+        return False
+
+    def __cleanOrders(self):
+        for order in self.__executionRequests:
+            if(self.__checkRequestExecuted(order["idExecution"])):
+                self.__executionRequests.remove(order)
+
     def GetNextExecutionId(self):
         if(len(self.__executionRequests) == 0):
             return 1
@@ -105,8 +120,9 @@ class jApiClient:
         return np.max(executionIds) + 1
 
     def SendExecutionRequest(self, requestedBy, outId, targetValue):
-        idExecution = self.GetNextExecutionId()
-        self.__executionRequests.append(CreateExecutionRequest(int(idExecution), requestedBy, 0, int(outId), int(targetValue)))
+        #idExecution = self.GetNextExecutionId()
+        #self.__executionRequests.append(CreateExecutionRequest(int(idExecution), requestedBy, 0, int(outId), int(targetValue)))
+        self.__serviceInputObj.targetOut0 = targetValue
         self.__serviceInputNeedSync = True
         return True
 

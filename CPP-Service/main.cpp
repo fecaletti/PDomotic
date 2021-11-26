@@ -21,16 +21,19 @@ using namespace std;
 #define SENSOR_2_PIN 3
 #define SENSOR_2_INT_ID 1
 #define OUT_PIN 6
-#define MAIN_LOOP_INTERVAL 300 //ms
+#define MAIN_LOOP_INTERVAL 50 //ms
 
 int peopleInTheRoom = 0;
-volatile bool sens1On = false;
-volatile bool sens2On = false;
-volatile bool out0On = false;
-volatile bool input0On = false;
+int sens1On = 0;
+int sens2On = 0;
+int out0On = 0;
+int input0On = 0;
 
 volatile unsigned long timeStampSens1 = 0;
 volatile unsigned long timeStampSens2 = 0;
+
+ServiceOutput outputData;
+ServiceInput inputData;
 
 void Sens1Callback();
 void Sens2Callback();
@@ -39,6 +42,7 @@ void TreatInputData(ServiceInput input, ServiceOutput* output);
 void ReadDigitalInputs();
 void ExecuteOrder(ExecutionRequest* order);
 void DefaultLog(string message);
+void SetOutputs(ServiceInput input);
 
 int digitalRead(int a);
 void digitalWrite(int a, int b);
@@ -53,7 +57,7 @@ int main()
     attachInterrupt(SENSOR_1_INT_ID, Sens1Callback, RISING);
     attachInterrupt(SENSOR_2_INT_ID, Sens2Callback, RISING);
 
-    StartJapiThread();
+    StartJapiThread(&outputData, &inputData);
 
     DefaultLog("Started! Entering main loop...");
     while(1)
@@ -89,25 +93,39 @@ int main()
 void TreatInputData(ServiceInput input, ServiceOutput* output)
 {
   output->automaticLightCommand = input.automaticLightCommand;
-  for (unsigned int i = 0; i < output->execRequestCounter; i++)
-  {
-    ExecuteOrder(&input.executionRequests->at(i));
-  }
+  SetOutputs(input);
+  // if(IsCleaningOrders())
+  //   return;
+  // for (unsigned int i = 0; i < output->execRequestCounter; i++)
+  // {
+  //   ExecuteOrder(&input.executionRequests->at(i));
+  // }
+}
+
+void SetOutputs(ServiceInput input)
+{
+  digitalWrite(0, input.targetOut0);
+  InsertOutput(0, out0On);
 }
 
 void ExecuteOrder(ExecutionRequest* order)
 {
-  if((order->status == ExecutionStatus :: WAITING) && (!ExecutedRequestsContains(order->idExecution)))
-  {
-    digitalWrite(order->outId, order->targetValue);
-    InsertExecutedRequest(order->idExecution);
-    DefaultLog("Executed order: " + to_string(order->idExecution));
-  }
+  // if((order->status == ExecutionStatus :: WAITING) && (!ExecutedRequestsContains(order->idExecution)))
+  // {
+  //   digitalWrite(order->outId, order->targetValue);
+  //   InsertOutput(0, order->targetValue);
+  //   //InsertExecutedRequest(order->idExecution);
+  //   DefaultLog("OUT VAL ->" + to_string(out0On) + " - " + to_string(order->targetValue));
+  //   DefaultLog("Executed order: " + to_string(order->idExecution));
+  // }
 }
 
 void ReadDigitalInputs()
 {
   input0On = true; //DigitalRead(input0);
+  InsertInput(0, 1);
+  InsertInput(1, 1);
+  InsertInput(2, 1);
 }
 
 void TreatOutputData(ServiceOutput* output, ServiceInput input)
@@ -117,8 +135,8 @@ void TreatOutputData(ServiceOutput* output, ServiceInput input)
   output->input0 = input0On;
   output->input1 = sens1On;
   output->input2 = sens2On;
-
-  output->out0 = out0On;
+  SetPeopleCounter(peopleInTheRoom);
+  //output->out0 = out0On;
 }
 
 int digitalRead(int a)

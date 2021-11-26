@@ -10,9 +10,10 @@ using namespace std;
 
 typedef struct ServiceInput
 {
-    std::vector<ExecutionRequest>* executionRequests;
-    bool automaticLightCommand = false;
-    bool debugOnline = false;
+    //std::vector<ExecutionRequest>* executionRequests;
+    int automaticLightCommand = 0;
+    int debugOnline = 0;
+    int targetOut0 = 0;
 };
 
 

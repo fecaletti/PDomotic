@@ -1,5 +1,6 @@
 {
-    "automaticLightCommand": true,
-    "debugOnline": false,
-    "executionRequests": []
+    "automaticLightCommand": 0,
+    "debugOnline": 0,
+    "executionRequests": [],
+    "targetOut0": 0
 }
