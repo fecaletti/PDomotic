@@ -5,7 +5,11 @@
 using namespace std;
 using json = nlohmann::json;
 
+#ifdef WINDOWS_OS
 std::thread* apiThread;
+#else
+pthread_t apiThread;
+#endif
 
 ServiceInput* inputPtr;
 ServiceOutput* outPtr;
@@ -20,8 +24,11 @@ bool ParseInput(std::stringstream* strStream, ServiceInput* inObject);
 bool ParseExecutionRequestsList(json obj, std::vector<ExecutionRequest>* execList);
 // bool InputRequestsContains(unsigned int requestId);
 // void CleanExecutedRequests();
-
+#ifdef WINDOWS_OS
 int MainAPILoop()
+#else
+void* MainAPILoop(void* args)
+#endif
 {
     //inputPtr->executionRequests = &executeGlobalList;
     //outPtr->executedRequests = &executedRequestsList;
@@ -55,6 +62,10 @@ int MainAPILoop()
     }
     
     JapiPrintln("Process finished...");
+
+    #ifndef WINDOWS_OS
+    pthread_exit(NULL);
+    #endif
     return 0;
 }
 
@@ -63,7 +74,11 @@ void StartJapiThread(ServiceOutput* ptrOut, ServiceInput* ptrIn)
     outPtr = ptrOut;
     inputPtr = ptrIn;
     _runJapiThread = true;
+    #ifdef WINDOWS_OS
     apiThread = new std::thread(MainAPILoop);
+    #else
+    int cthread_ret = pthread_create(apiThread, NULL, MainAPILoop, NULL);
+    #endif
 }
 
 void StopJapiThread()

@@ -7,7 +7,13 @@
 #include <stdio.h>
 #include <time.h>
 #include <chrono>
+
+#if defined(_WIN32) || defined(WIN32) 
 #include <thread>
+#define WINDOWS_OS
+#else
+#include <pthread.h>
+#endif
 
 #include "model/executionRequest.h"
 #include "model/serviceInput.h"

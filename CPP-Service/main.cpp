@@ -62,10 +62,6 @@ int main()
     DefaultLog("Started! Entering main loop...");
     while(1)
     {
-      //digitalWrite(LED_BUILTIN, HIGH);
-      //_sleep(1000); // Wait for 1000 millisecond(s)
-      //digitalWrite(LED_BUILTIN, LOW);
-      //_sleep(1000); // Wait for 1000 millisecond(s)
 
       if(inputData.debugOnline)
       {
