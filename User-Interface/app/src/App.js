@@ -138,7 +138,7 @@ function App() {
                     <tr>
                       <td>Automatic Command:</td>
                       <td>
-                        <select id="selectConfig0" defaultValue="0">
+                        <select id="selectConfig0" defaultValue="0" onChange={() => SetConfigs()}>
                           <option value="0">off</option>
                           <option value="1">on</option>
                         </select>
@@ -153,7 +153,7 @@ function App() {
                 : 
                 <h4>...</h4>}
                 <br/>
-                <Button className="App-btn" onClick={() => SetConfigs()} ref={ConfigBtnRef}>Send</Button>
+                {/* <Button className="App-btn" onClick={() => SetConfigs()} ref={ConfigBtnRef}>Send</Button> */}
               </div>
             </div>
         </body>

@@ -1,6 +1,6 @@
 {
-    "automaticLightCommand": 0,
+    "automaticLightCommand": 1,
     "debugOnline": 0,
     "executionRequests": [],
-    "targetOut0": 0
+    "targetOut0": 1
 }
