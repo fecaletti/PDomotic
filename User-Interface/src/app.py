@@ -3,7 +3,7 @@ import flask
 from flask_restful import Api, Resource, reqparse
 from flask import Flask, json, g, request
 from flask_cors import CORS
-from werkzeug import http #comment this on deployment
+#from werkzeug import http #comment this on deployment
 #from handlers.LightCommanderHandler import LightCommanderHandler
 from lib.jApi import jApiClient
 
