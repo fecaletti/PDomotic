@@ -39,4 +39,4 @@ api.add_resource(LightCommander, "/")
 
 if __name__ == '__main__':
     japi.StartThread()
-    app.run(debug=True)
+    app.run(host="0.0.0.0", debug=True, port=5000)
