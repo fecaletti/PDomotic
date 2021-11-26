@@ -1,7 +1,13 @@
 #include <iostream>
-#include <chrono>
-#include <thread>
 #include "lib/jApi/jApi.h"
+
+#if defined(WIN32) || (_WIN32)
+#define WINDOWS_OS
+#include <thread>
+#include <chrono>
+#else
+#include <unistd.h>
+#endif
 
 using namespace std;
 
@@ -80,7 +86,11 @@ int main()
       TreatInputData(inputData, &outputData);
       TreatOutputData(&outputData, inputData);
 
+      #ifdef WINDOWS_OS
       std::this_thread::sleep_for(std::chrono::milliseconds(MAIN_LOOP_INTERVAL));
+      #else
+      usleep(MAIN_LOOP_INTERVAL * 1000);
+      #endif
     }
 
     return 0;

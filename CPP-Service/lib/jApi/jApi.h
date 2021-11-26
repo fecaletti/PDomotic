@@ -6,13 +6,14 @@
 #include <sstream>
 #include <stdio.h>
 #include <time.h>
-#include <chrono>
 
 #if defined(_WIN32) || defined(WIN32) 
 #include <thread>
+#include <chrono>
 #define WINDOWS_OS
 #else
 #include <pthread.h>
+#include <unistd.h>
 #endif
 
 #include "model/executionRequest.h"

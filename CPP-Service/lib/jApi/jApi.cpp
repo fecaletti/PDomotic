@@ -49,7 +49,11 @@ void* MainAPILoop(void* args)
             //PrintInput(inputPtr);
             //CleanExecutedRequests();
             WriteOutput(*outPtr);
+            #ifdef WINDOWS_OS
             std::this_thread::sleep_for(std::chrono::milliseconds(150));
+            #else
+            usleep(150000);
+            #endif
         }
         catch(const std::exception& e)
         {
