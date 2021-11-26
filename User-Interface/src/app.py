@@ -7,7 +7,7 @@ from flask_cors import CORS
 #from handlers.LightCommanderHandler import LightCommanderHandler
 from lib.jApi import jApiClient
 
-japi = jApiClient("~\\PDomotic\\PDomotic\\CPP-Service\\data\\input.json", "~\\PDomotic\\PDomotic\\CPP-Service\\data\\output.json")
+japi = jApiClient("~/PDomotic/PDomotic/CPP-Service/data/input.json", "~/PDomotic/PDomotic/CPP-Service/data/output.json")
 app = Flask(__name__)
 CORS(app) #comment this on deployment
 api = Api(app)
