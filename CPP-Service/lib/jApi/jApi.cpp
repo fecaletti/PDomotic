@@ -93,7 +93,7 @@ void StopJapiThread()
         apiThread->join();
     #else
     pthread_attr_destroy(&attrApiThread);
-    int join_thread_return = pthread_join(&apiThread, &apiThreadStatus);
+    int join_thread_return = pthread_join(apiThread, &apiThreadStatus);
     #endif
 }
 
