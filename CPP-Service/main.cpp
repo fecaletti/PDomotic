@@ -7,11 +7,14 @@
 #include <chrono>
 #else
 #include <unistd.h>
+#include <wiringPi.h>
 #endif
 
 using namespace std;
 
-/* DEBUG DEFINES */
+/* DEBUG DEFINES --> MOCK WIRING PI */
+#ifdef WINDOWS_OS
+
 #define INPUT 0
 #define OUTPUT 1
 #define LED_BUILTIN 1
@@ -19,7 +22,9 @@ using namespace std;
 #define HIGH 1
 #define LOW 0
 #define pinMode(a , b) { cout << "PINMODE-> " << a << ", " << b << endl; }
-#define attachInterrupt(a , b, c) { cout << "ATTACHINTERRUPT-> " << a << ", " << b << ", " << c << endl; } 
+#define attachInterrupt(a , b, c) { cout << "ATTACHINTERRUPT-> " << a << ", " << b << ", " << c << endl; }
+
+#endif
 
 
 #define SENSOR_1_PIN 2
@@ -50,50 +55,55 @@ void ExecuteOrder(ExecutionRequest* order);
 void DefaultLog(string message);
 void SetOutputs(ServiceInput input);
 
+#ifdef WINDOWS_OS
 int digitalRead(int a);
 void digitalWrite(int a, int b);
+#endif
 
 int main()
 {
-    pinMode(LED_BUILTIN, OUTPUT);
-    pinMode(SENSOR_1_PIN, INPUT);
-    pinMode(SENSOR_2_PIN, INPUT);
-    pinMode(OUT_PIN, OUTPUT);
+  #ifndef WINDOWS_OS
+  wiringPiSetup();
+  #endif
+  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(SENSOR_1_PIN, INPUT);
+  pinMode(SENSOR_2_PIN, INPUT);
+  pinMode(OUT_PIN, OUTPUT);
 
-    attachInterrupt(SENSOR_1_INT_ID, Sens1Callback, RISING);
-    attachInterrupt(SENSOR_2_INT_ID, Sens2Callback, RISING);
+  attachInterrupt(SENSOR_1_INT_ID, Sens1Callback, RISING);
+  attachInterrupt(SENSOR_2_INT_ID, Sens2Callback, RISING);
 
-    StartJapiThread(&outputData, &inputData);
+  StartJapiThread(&outputData, &inputData);
 
-    DefaultLog("Started! Entering main loop...");
-    while(1)
+  DefaultLog("Started! Entering main loop...");
+  while(1)
+  {
+
+    if(inputData.debugOnline)
     {
-
-      if(inputData.debugOnline)
-      {
-        DefaultLog("Pessoas no quarto: " + to_string(peopleInTheRoom));
-        DefaultLog("Estado da lâmpada: " + to_string(digitalRead(OUT_PIN)));
-        DefaultLog(to_string(sens1On) + " - " + to_string(sens2On));
-        DefaultLog(to_string(digitalRead(SENSOR_1_PIN)) + " - " + to_string(digitalRead(SENSOR_2_PIN)));
-      }
-
-      if(inputData.automaticLightCommand)
-      {
-        if(peopleInTheRoom > 0) digitalWrite(OUT_PIN, HIGH);
-        else digitalWrite(OUT_PIN, LOW);  
-      }
-
-      TreatInputData(inputData, &outputData);
-      TreatOutputData(&outputData, inputData);
-
-      #ifdef WINDOWS_OS
-      std::this_thread::sleep_for(std::chrono::milliseconds(MAIN_LOOP_INTERVAL));
-      #else
-      usleep(MAIN_LOOP_INTERVAL * 1000);
-      #endif
+      DefaultLog("Pessoas no quarto: " + to_string(peopleInTheRoom));
+      DefaultLog("Estado da lâmpada: " + to_string(digitalRead(OUT_PIN)));
+      DefaultLog(to_string(sens1On) + " - " + to_string(sens2On));
+      DefaultLog(to_string(digitalRead(SENSOR_1_PIN)) + " - " + to_string(digitalRead(SENSOR_2_PIN)));
     }
 
-    return 0;
+    if(inputData.automaticLightCommand)
+    {
+      if(peopleInTheRoom > 0) digitalWrite(OUT_PIN, HIGH);
+      else digitalWrite(OUT_PIN, LOW);  
+    }
+
+    TreatInputData(inputData, &outputData);
+    TreatOutputData(&outputData, inputData);
+
+    #ifdef WINDOWS_OS
+    std::this_thread::sleep_for(std::chrono::milliseconds(MAIN_LOOP_INTERVAL));
+    #else
+    usleep(MAIN_LOOP_INTERVAL * 1000);
+    #endif
+  }
+
+  return 0;
 }
 
 void TreatInputData(ServiceInput input, ServiceOutput* output)
@@ -145,17 +155,6 @@ void TreatOutputData(ServiceOutput* output, ServiceInput input)
   //output->out0 = out0On;
 }
 
-int digitalRead(int a)
-{
-  if(a == 2) return sens1On;
-  else return sens2On;
-}
-
-void digitalWrite(int a, int b)
-{
-  out0On = b;
-}
-
 void Sens1Callback()
 {
   sens1On = true;
@@ -182,3 +181,19 @@ void DefaultLog(string message)
 {
   cout << "#CPP-SERVICE> " << message << endl;
 }
+
+/* WiringPi MOCK */
+#ifdef WINDOWS_OS
+
+int digitalRead(int a)
+{
+  if(a == 2) return sens1On;
+  else return sens2On;
+}
+
+void digitalWrite(int a, int b)
+{
+  out0On = b;
+}
+
+#endif
