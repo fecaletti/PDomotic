@@ -27,11 +27,9 @@ using namespace std;
 #endif
 
 
-#define SENSOR_1_PIN 2
-#define SENSOR_1_INT_ID 0
-#define SENSOR_2_PIN 3
-#define SENSOR_2_INT_ID 1
-#define OUT_PIN 6
+#define SENSOR_1_PIN 2 //PIN 7 HEAD 3.3V -- PIN13 / BCM 21
+#define SENSOR_2_PIN 3 //PIN 8 HEAD 3.3V -- PIN15 / BCM 22
+#define OUT_PIN 7 //PIN 4 HEAD 3.3V -- PIN 7 / BCM 4
 #define MAIN_LOOP_INTERVAL 50 //ms
 
 int peopleInTheRoom = 0;
@@ -65,13 +63,14 @@ int main()
   #ifndef WINDOWS_OS
   wiringPiSetup();
   #endif
-  pinMode(LED_BUILTIN, OUTPUT);
   pinMode(SENSOR_1_PIN, INPUT);
   pinMode(SENSOR_2_PIN, INPUT);
   pinMode(OUT_PIN, OUTPUT);
 
-  attachInterrupt(SENSOR_1_INT_ID, Sens1Callback, RISING);
-  attachInterrupt(SENSOR_2_INT_ID, Sens2Callback, RISING);
+  #ifndef WINDOWS_OS
+  wiringPiISR(SENSOR_1_PIN, INT_EDGE_FALLING, Sens1Callback);
+  wiringPiISR(SENSOR_2_PIN, INT_EDGE_FALLING, Sens2Callback);
+  #endif
 
   StartJapiThread(&outputData, &inputData);
 
