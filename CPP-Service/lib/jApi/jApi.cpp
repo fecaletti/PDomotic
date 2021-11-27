@@ -9,8 +9,8 @@ using json = nlohmann::json;
 std::thread* apiThread;
 #else
 pthread_t apiThread;
-pthread_attr_t attrApiThread;
-void* apiThreadStatus;
+//pthread_attr_t attrApiThread;
+//void* apiThreadStatus;
 #endif
 
 ServiceInput* inputPtr;
@@ -83,9 +83,9 @@ void StartJapiThread(ServiceOutput* ptrOut, ServiceInput* ptrIn)
     #ifdef WINDOWS_OS
     apiThread = new std::thread(MainAPILoop);
     #else
-    pthread_attr_init(&attrApiThread);
-    pthread_attr_setdetachstate(&attrApiThread, PTHREAD_CREATE_JOINABLE);
-    int cthread_ret = pthread_create(&apiThread, &attrApiThread, MainAPILoop, NULL);
+   // pthread_attr_init(&attrApiThread);
+   // pthread_attr_setdetachstate(&attrApiThread, PTHREAD_CREATE_JOINABLE);
+    int cthread_ret = pthread_create(&apiThread, NULL, MainAPILoop, NULL);
     #endif
 }
 
@@ -95,9 +95,9 @@ void StopJapiThread()
     #ifdef WINDOWS_OS
     if(apiThread->joinable())
         apiThread->join();
-    #else
-    pthread_attr_destroy(&attrApiThread);
-    int join_thread_return = pthread_join(apiThread, &apiThreadStatus);
+    //#else
+    //pthread_attr_destroy(&attrApiThread);
+    //int join_thread_return = pthread_join(apiThread, &apiThreadStatus);
     #endif
 }
 

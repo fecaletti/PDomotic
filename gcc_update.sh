@@ -1,3 +1,4 @@
+cd ~ &&
 echo 'export LD_LIBRARY_PATH=/opt/gcc-10.1.0/lib:$LD_LIBRARY_PATH' >> ~/.bashrc &&
 . ~/.bashrc &&
 sudo ln -s /usr/include/arm-linux-gnueabihf/sys /usr/include/sys &&

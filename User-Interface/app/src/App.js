@@ -6,7 +6,7 @@ import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
 import axios from 'axios';
 
-const MAIN_API_URL = 'http://192.168.0.12:5000/';
+const MAIN_API_URL = 'http://192.168.0.32:5000/';
 
 function App() {
   const [getMessage, setGetMessage] = useState({});
