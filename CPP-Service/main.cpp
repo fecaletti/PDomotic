@@ -98,9 +98,12 @@ int main()
     TreatOutputData(&outputData, inputData);
 
     timeStampGeneral++;
+    
     if(sens1On && ((timeStampGeneral - timeStampSens1) >= SENS1_DEAD_TIME))
       sens1On = false;
-      
+
+    if(sens2On && ((timeStampGeneral - timeStampSens2) >= SENS1_DEAD_TIME))
+      sens2On = false;
     #ifdef WINDOWS_OS
     std::this_thread::sleep_for(std::chrono::milliseconds(MAIN_LOOP_INTERVAL));
     #else
