@@ -30,6 +30,7 @@ using namespace std;
 #define SENSOR_1_PIN 2 //PIN 7 HEAD 3.3V -- PIN13 / BCM 21
 #define SENSOR_2_PIN 3 //PIN 8 HEAD 3.3V -- PIN15 / BCM 22
 #define OUT_PIN 7 //PIN 4 HEAD 3.3V -- PIN 7 / BCM 4
+#define IN_PIN  0 //PIN 6 HEAD 3.3V -- PIN 11 / BCM 17
 #define MAIN_LOOP_INTERVAL 50 //ms
 #define SENS1_DEAD_TIME 40 // * main loop interval = 50ms   
 
@@ -68,6 +69,7 @@ int main()
   pinMode(SENSOR_1_PIN, INPUT);
   pinMode(SENSOR_2_PIN, INPUT);
   pinMode(OUT_PIN, OUTPUT);
+  pinMode(IN_PIN, INPUT);
 
   #ifndef WINDOWS_OS
   wiringPiISR(SENSOR_1_PIN, INT_EDGE_FALLING, Sens1Callback);
@@ -83,7 +85,7 @@ int main()
     if(inputData.debugOnline)
     {
       DefaultLog("Pessoas no quarto: " + to_string(peopleInTheRoom));
-      DefaultLog("Estado da lâmpada: " + to_string(digitalRead(OUT_PIN)));
+      DefaultLog("Estado da lâmpada: O: " + to_string(digitalRead(OUT_PIN)) + " - I: " + to_string(input0On));
       DefaultLog(to_string(sens1On) + " - " + to_string(sens2On));
       DefaultLog(to_string(digitalRead(SENSOR_1_PIN)) + " - " + to_string(digitalRead(SENSOR_2_PIN)));
     }
@@ -94,6 +96,7 @@ int main()
       else digitalWrite(OUT_PIN, LOW);  
     }
 
+    input0On = digitalRead(IN_PIN);
     TreatInputData(inputData, &outputData);
     TreatOutputData(&outputData, inputData);
 
@@ -128,7 +131,7 @@ void TreatInputData(ServiceInput input, ServiceOutput* output)
 
 void SetOutputs(ServiceInput input)
 {
-  if(!input.automaticLightCommand)
+  if((!input.automaticLightCommand) && (!input0On))
     digitalWrite(OUT_PIN, input.targetOut0);
 }
 
