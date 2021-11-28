@@ -31,6 +31,7 @@ using namespace std;
 #define SENSOR_2_PIN 3 //PIN 8 HEAD 3.3V -- PIN15 / BCM 22
 #define OUT_PIN 7 //PIN 4 HEAD 3.3V -- PIN 7 / BCM 4
 #define MAIN_LOOP_INTERVAL 50 //ms
+#define SENS1_DEAD_TIME 20 // * main loop interval = 50ms   
 
 int peopleInTheRoom = 0;
 int sens1On = 0;
@@ -40,6 +41,7 @@ int input0On = 0;
 
 volatile unsigned long timeStampSens1 = 0;
 volatile unsigned long timeStampSens2 = 0;
+volatile unsigned long timeStampGeneral = 0;
 
 ServiceOutput outputData;
 ServiceInput inputData;
@@ -95,6 +97,10 @@ int main()
     TreatInputData(inputData, &outputData);
     TreatOutputData(&outputData, inputData);
 
+    timeStampGeneral++;
+    if(sens1On && ((timeStampGeneral - timeStampSens1) >= SENS1_DEAD_TIME))
+      sens1On = false;
+      
     #ifdef WINDOWS_OS
     std::this_thread::sleep_for(std::chrono::milliseconds(MAIN_LOOP_INTERVAL));
     #else
@@ -157,6 +163,7 @@ void TreatOutputData(ServiceOutput* output, ServiceInput input)
 void Sens1Callback()
 {
   sens1On = true;
+  timeStampSens1 = timeStampGeneral;
   if(sens2On)
   {
     if(peopleInTheRoom > 0) peopleInTheRoom--;
@@ -168,6 +175,7 @@ void Sens1Callback()
 void Sens2Callback()
 {
   sens2On = true;
+  timeStampSens2 = timeStampGeneral;
   if(sens1On)
   {
     peopleInTheRoom++;
