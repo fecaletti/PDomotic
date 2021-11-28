@@ -128,8 +128,8 @@ void TreatInputData(ServiceInput input, ServiceOutput* output)
 
 void SetOutputs(ServiceInput input)
 {
-  digitalWrite(0, input.targetOut0);
-  InsertOutput(0, out0On);
+  if(!input.automaticLightCommand)
+    digitalWrite(OUT_PIN, input.targetOut0);
 }
 
 void ExecuteOrder(ExecutionRequest* order)
