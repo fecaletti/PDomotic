@@ -31,7 +31,7 @@ using namespace std;
 #define SENSOR_2_PIN 3 //PIN 8 HEAD 3.3V -- PIN15 / BCM 22
 #define OUT_PIN 7 //PIN 4 HEAD 3.3V -- PIN 7 / BCM 4
 #define MAIN_LOOP_INTERVAL 50 //ms
-#define SENS1_DEAD_TIME 20 // * main loop interval = 50ms   
+#define SENS1_DEAD_TIME 40 // * main loop interval = 50ms   
 
 int peopleInTheRoom = 0;
 int sens1On = 0;
@@ -98,7 +98,7 @@ int main()
     TreatOutputData(&outputData, inputData);
 
     timeStampGeneral++;
-    
+
     if(sens1On && ((timeStampGeneral - timeStampSens1) >= SENS1_DEAD_TIME))
       sens1On = false;
 
@@ -160,7 +160,7 @@ void TreatOutputData(ServiceOutput* output, ServiceInput input)
   output->input1 = sens1On;
   output->input2 = sens2On;
   SetPeopleCounter(peopleInTheRoom);
-  //output->out0 = out0On;
+  InsertOutput(0, digitalRead(OUT_PIN));
 }
 
 void Sens1Callback()
