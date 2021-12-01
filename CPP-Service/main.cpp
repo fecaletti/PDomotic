@@ -131,7 +131,7 @@ void TreatInputData(ServiceInput input, ServiceOutput* output)
 
 void SetOutputs(ServiceInput input)
 {
-  if((!input.automaticLightCommand) && (!input0On))
+  if((!input.automaticLightCommand) && ((!input0On) || (!input.targetOut0)))
     digitalWrite(OUT_PIN, input.targetOut0);
 }
 
