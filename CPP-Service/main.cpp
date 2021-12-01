@@ -96,7 +96,7 @@ int main()
       else digitalWrite(OUT_PIN, LOW);  
     }
 
-    input0On = digitalRead(IN_PIN);
+    input0On = !digitalRead(IN_PIN);
     TreatInputData(inputData, &outputData);
     TreatOutputData(&outputData, inputData);
 
